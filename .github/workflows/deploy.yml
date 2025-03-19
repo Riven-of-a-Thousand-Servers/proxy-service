@@ -38,7 +38,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/proxy-service:${{ env.TAG }}
+            ${{ secrets.DOCKER_USERNAME }}/proxy-service:${{ env.VERSION }}
             ${{ secrets.DOCKER_USERNAME }}/proxy-service:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/proxy-service:latest
           cache-to: type=inline
