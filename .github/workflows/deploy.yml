@@ -1,6 +1,7 @@
 name: Deploy Proxy Service
 
 on:
+  workflow_dispatch:
   create:
     tags:
       - "v*.*.*"
