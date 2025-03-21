@@ -1,17 +1,13 @@
-name: Deploy Proxy to Digital Ocean
+name: Deploy Proxy Service
 
 on:
-  push:
-    branches:
-      - main
   create:
     tags:
       - "v*.*.*"
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -38,17 +34,11 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/proxy-service:${{ env.TAG }}
+            ${{ secrets.DOCKER_USERNAME }}/proxy-service:${{ env.VERSION }}
             ${{ secrets.DOCKER_USERNAME }}/proxy-service:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/proxy-service:latest
-          cache-to: type=inline
+  deploy:
+    runs-on: self-hosted
+    uses: Riven-of-a-Thousand-Servers/rivenbot-deployments/.github/workflows/stack-deploy.yml
+    with:
+      proxy-service-version: ${{ env.VERSION }}
 
-      - name: Deploy to Digital Ocean
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.DROPLET_ID }}
-          username: ${{ secrets.DROPLET_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/proxy-service:${{ env.VERSION }}
-            docker service update --image ${{ secrets.DOCKER_USERNAME }}/proxy-service/${{ env.VERSION }}
