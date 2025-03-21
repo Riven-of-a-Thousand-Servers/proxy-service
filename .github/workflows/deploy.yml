@@ -38,7 +38,10 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/proxy-service:latest
   deploy:
     runs-on: self-hosted
-    uses: Riven-of-a-Thousand-Servers/rivenbot-deployments/.github/workflows/stack-deploy.yml
-    with:
-      proxy-service-version: ${{ env.VERSION }}
+    
+    steps:
+      - name: Docker Stack Deploy
+        uses: Riven-of-a-Thousand-Servers/rivenbot-deployments/.github/workflows/stack-deploy.yml@main
+        with:
+           proxy-service-version: ${{ env.VERSION }}
 
