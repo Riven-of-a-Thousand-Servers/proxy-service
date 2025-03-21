@@ -44,5 +44,5 @@ jobs:
 
     uses: Riven-of-a-Thousand-Servers/rivenbot-deployments/.github/workflows/stack-deploy.yml@main
     with:
-        proxy-service-version: ${{ env.VERSION }}
+      proxy-service-version: ${{ env.VERSION }}
 
