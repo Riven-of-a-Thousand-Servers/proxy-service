@@ -49,10 +49,7 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/proxy-service:${{ env.VERSION }}
             ${{ secrets.DOCKER_USERNAME }}/proxy-service:latest
   deploy:
-    runs-on: self-hosted
-
     needs: build-and-push
-
     uses: Riven-of-a-Thousand-Servers/rivenbot-deployments/.github/workflows/stack-deploy.yml@main
     with:
       proxy-service-version: ${{ env.VERSION }}
