@@ -3,7 +3,7 @@ FROM golang:1.23 as builder
 WORKDIR /app
 COPY . .
 
-RUN go mod tidy && GOOS=linux GOARCH=amd64 go build -o proxy-service ./cmd/proxy/
+RUN go mod tidy && GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -o proxy-service ./cmd/proxy/
 
 FROM alpine:latest
 WORKDIR /root/
