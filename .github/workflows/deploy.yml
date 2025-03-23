@@ -53,8 +53,25 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/proxy-service:${{ env.VERSION }}
             ${{ secrets.DOCKER_USERNAME }}/proxy-service:latest
-  deploy:
+  pre-deploy:
     needs: build-and-push
+    runs-on: self-hosted
+    steps:
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Update Docker secrets
+        run: |
+          docker secret rm bungie_api_key || true
+          echo "$BUNGIE_API_KEY" | docker secret create bungie_api_key - 
+          echo "$IPV6" | docker secret create ipv6 -
+        env:
+          IPV6: ${{ secrets.IPV6 }}
+          BUNGIE_API_KEY: ${{ secrets.BUNGIE_API_KEY }}
+  deploy:
+    needs: pre-deploy 
     uses: Riven-of-a-Thousand-Servers/rivenbot-deployments/.github/workflows/stack-deploy.yml@main
     with:
       proxy-service-version: ${{ needs.build-and-push.outputs.version }}
