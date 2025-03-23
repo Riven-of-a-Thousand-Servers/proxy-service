@@ -15,7 +15,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/joho/godotenv"
 	"golang.org/x/time/rate"
 )
 
@@ -50,9 +49,6 @@ var (
 
 func main() {
 	flag.Parse()
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	securityKey = os.Getenv("BUNGIE_API_KEY")
 	if securityKey == "" {
@@ -60,6 +56,7 @@ func main() {
 	}
 
 	addr := netip.MustParseAddr(os.Getenv("IPV6"))
+
 	for i := 0; i < *ipv6n; i++ {
 		d := &net.Dialer{
 			LocalAddr: &net.TCPAddr{
