@@ -27,7 +27,6 @@ var (
 )
 
 var (
-	securityKey         = ""
 	rateIntervalSeconds = 10
 	rateInterval        = time.Second * time.Duration(rateIntervalSeconds)
 )
@@ -47,15 +46,28 @@ var (
 	statsPath      string = "Destiny2/Stats/PostGameCarnageReport"
 )
 
+func ReadSecret(path string) (string, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(string(data)), nil
+}
+
 func main() {
 	flag.Parse()
 
-	securityKey = os.Getenv("BUNGIE_API_KEY")
-	if securityKey == "" {
-		log.Fatal("Must pass bungie api key")
+	addressPath := os.Getenv("IPV6")
+	if addressPath == "" {
+		log.Fatal("IPV6 env variable must be passed")
 	}
 
-	addr := netip.MustParseAddr(os.Getenv("IPV6"))
+	address, err := ReadSecret(addressPath)
+	if err != nil {
+		log.Fatalf("Error parsing IPv6 address from docker secret: %v", err)
+	}
+
+	addr := netip.MustParseAddr(address)
 
 	for i := 0; i < *ipv6n; i++ {
 		d := &net.Dialer{
@@ -124,11 +136,6 @@ func (t *transport) RoundTrip(r *http.Request) (*http.Response, error) {
 		rl = t.wwwRl[n%int64(len(t.wwwRl))]
 	}
 
-	if r.Header.Get("x-api-key") == securityKey {
-		if *verbose {
-			log.Printf("Security key provided: %s\n", r.Header.Get("x-api-key"))
-		}
-	}
 	if *verbose {
 		log.Printf("Sending request: %s\n", r.URL.String())
 		log.Printf("Request headers: %s\n", r.Header)
