@@ -54,7 +54,7 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/proxy-service:${{ env.VERSION }}
             ${{ secrets.DOCKER_USERNAME }}/proxy-service:latest
   deploy:
-    needs: pre-deploy 
+    needs: build-and-push 
     uses: Riven-of-a-Thousand-Servers/rivenbot-deployments/.github/workflows/stack-deploy.yml@main
     with:
       proxy-service-version: ${{ needs.build-and-push.outputs.version }}
