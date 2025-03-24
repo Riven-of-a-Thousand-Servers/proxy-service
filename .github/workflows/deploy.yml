@@ -53,18 +53,6 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/proxy-service:${{ env.VERSION }}
             ${{ secrets.DOCKER_USERNAME }}/proxy-service:latest
-  pre-deploy:
-    needs: build-and-push
-    runs-on: self-hosted
-    steps:
-      - name: Update Docker secrets
-        run: |
-          docker secret rm bungie_api_key || true
-          echo "$BUNGIE_API_KEY" | docker secret create bungie_api_key - 
-          echo "$IPV6" | docker secret create ipv6 -
-        env:
-          IPV6: ${{ secrets.IPV6 }}
-          BUNGIE_API_KEY: ${{ secrets.BUNGIE_API_KEY }}
   deploy:
     needs: pre-deploy 
     uses: Riven-of-a-Thousand-Servers/rivenbot-deployments/.github/workflows/stack-deploy.yml@main
