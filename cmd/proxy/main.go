@@ -98,6 +98,7 @@ func main() {
 
 	rp := &httputil.ReverseProxy{
 		Director: func(r *http.Request) {
+			log.Printf("Received http request: %#v", r)
 			if strings.Contains(r.URL.Path, statsPath) {
 				r.URL.Host = statsDomain
 			} else {
