@@ -9,4 +9,4 @@ FROM alpine:latest
 WORKDIR /root/
 COPY --from=builder /app/proxy-service .
 
-CMD ["/root/proxy-service"]
+CMD ["/root/proxy-service", "-ipv6n=16", "-interface=eth0", "verbose=true"]
