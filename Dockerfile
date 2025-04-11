@@ -6,6 +6,7 @@ COPY . .
 RUN go mod tidy && GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -o proxy-service ./cmd/proxy/
 
 FROM alpine:latest
+RUN apk add --no-cache curl
 WORKDIR /root/
 COPY --from=builder /app/proxy-service .
 
