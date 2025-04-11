@@ -119,7 +119,7 @@ func main() {
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("x-betteruptime-probe") != "" {
-			io.WriteString(w, "ok")
+			io.WriteString(w, "Ok")
 			return
 		}
 		rp.ServeHTTP(w, r)
