@@ -110,7 +110,14 @@ func main() {
 		Transport: proxyTransport,
 	}
 
-	baseHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		io.WriteString(w, "Ok")
+	})
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("x-betteruptime-probe") != "" {
 			io.WriteString(w, "ok")
 			return
@@ -119,7 +126,7 @@ func main() {
 	})
 
 	log.Printf("Ready on port %d", *port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), baseHandler))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), mux))
 }
 
 func (t *transport) RoundTrip(r *http.Request) (*http.Response, error) {
