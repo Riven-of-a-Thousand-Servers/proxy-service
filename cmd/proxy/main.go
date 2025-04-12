@@ -69,7 +69,7 @@ func main() {
 
 	addr := netip.MustParseAddr(address)
 
-	for i := 0; i < *ipv6n; i++ {
+	for range *ipv6n {
 		d := &net.Dialer{
 			LocalAddr: &net.TCPAddr{
 				IP: net.IP(addr.AsSlice()),
@@ -81,7 +81,7 @@ func main() {
 		rt.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
 			conn, err := d.DialContext(ctx, network, addr)
 			if err == nil {
-				log.Fatal("Something happened while building transport")
+				log.Fatalf("Something happened while building transport: %v", err)
 			}
 			return conn, err
 		}
