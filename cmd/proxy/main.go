@@ -80,7 +80,7 @@ func main() {
 		rt := http.DefaultTransport.(*http.Transport).Clone()
 		rt.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
 			conn, err := d.DialContext(ctx, network, addr)
-			if err == nil {
+			if err != nil {
 				log.Fatalf("Something happened while building transport: %v", err)
 			}
 			return conn, err
