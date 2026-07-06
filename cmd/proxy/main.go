@@ -11,6 +11,7 @@ import (
 	"net/http/httputil"
 	"net/netip"
 	"os"
+	"os/exec"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -19,7 +20,7 @@ import (
 )
 
 var (
-	ipv6interface = flag.String("interface", "enp1s0", "Ipv6 interface to use")
+	ipv6interface = flag.String("interface", "eth0", "Ipv6 interface to use")
 	ipv6n         = flag.Int("v6_n", 1, "Number of sequential Ipv6 addresses")
 	port          = flag.Int("port", 8081, "Port to listen on")
 	printAddrs    = flag.Bool("print_addrs", false, "Print Ipv6 addresses")
@@ -70,6 +71,16 @@ func main() {
 	addr := netip.MustParseAddr(address)
 
 	for range *ipv6n {
+		cmd := exec.Command("ip", "-6", "addr", "add", fmt.Sprintf("%s/64", addr.String()))
+
+		if err := cmd.Run(); err != nil {
+			if *verbose {
+				log.Printf("Note: ip addr add failed or already exists for %s: %v", addr.String(), err)
+			}
+		} else if *verbose {
+			log.Printf("Successfully plumbed %s onto %s", addr.String(), *ipv6interface)
+		}
+
 		d := &net.Dialer{
 			LocalAddr: &net.TCPAddr{
 				IP: net.IP(addr.AsSlice()),
