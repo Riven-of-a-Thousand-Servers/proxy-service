@@ -73,9 +73,9 @@ func main() {
 	for range *ipv6n {
 		cmd := exec.Command("ip", "-6", "addr", "add", fmt.Sprintf("%s/64", addr.String()), "dev", *ipv6interface)
 
-		if err := cmd.Run(); err != nil {
+		if output, err := cmd.CombinedOutput(); err != nil {
 			if *verbose {
-				log.Printf("Note: ip addr add failed or already exists for %s: %v", addr.String(), err)
+				log.Printf("Failed to add IP %s: %v | Output: %s", addr.String(), err, string(output))
 			}
 		} else if *verbose {
 			log.Printf("Successfully plumbed %s onto %s", addr.String(), *ipv6interface)
