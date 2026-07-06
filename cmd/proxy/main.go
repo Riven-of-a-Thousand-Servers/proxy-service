@@ -71,7 +71,7 @@ func main() {
 	addr := netip.MustParseAddr(address)
 
 	for range *ipv6n {
-		cmd := exec.Command("ip", "-6", "addr", "add", fmt.Sprintf("%s/64", addr.String()))
+		cmd := exec.Command("ip", "-6", "addr", "add", fmt.Sprintf("%s/64", addr.String()), "dev", *ipv6interface)
 
 		if err := cmd.Run(); err != nil {
 			if *verbose {
